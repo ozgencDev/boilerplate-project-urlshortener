@@ -58,7 +58,7 @@ app.post("/api/shorturl", (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({ error: "invalid URL" });
   }
 });
 
