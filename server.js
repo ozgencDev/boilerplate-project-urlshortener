@@ -38,7 +38,8 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 app.post("/api/shorturl", (req, res) => {
   const { url: longUrl } = req.body;
   if (!validUrl.isWebUri(longUrl)) {
-    res.status(400).send({ error: "invalid url" });
+    console.log("ses");
+    res.json({ error: "invalid url" });
     return;
   }
   const { hostname, origin } = new URL(longUrl);
@@ -48,7 +49,7 @@ app.post("/api/shorturl", (req, res) => {
     if (!err) {
       const shortenedUrl = await urlModel.findOne({ longUrl });
       if (shortenedUrl) {
-        res.send({
+        res.json({
           original_url: shortenedUrl.longUrl,
           short_url: shortenedUrl.shortUrl,
         });
@@ -56,10 +57,10 @@ app.post("/api/shorturl", (req, res) => {
         const shortUrl = makeShortUrl(longUrl);
         const url = new urlModel({ longUrl, shortUrl });
         const doc = await url.save();
-        res.send({ original_url: doc.longUrl, short_url: doc.shortUrl });
+        res.json({ original_url: doc.longUrl, short_url: doc.shortUrl });
       }
     } else {
-      res.send({ error: "invalid url" });
+      res.json({ error: "invalid url" });
     }
   });
 });
