@@ -31,7 +31,7 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
     const doc = await urlModel.findOne({ shortUrl: req.params.shortUrl });
     res.redirect(doc.longUrl);
   } catch (error) {
-    res.status(500).send(error);
+    res.json({ error: "invalid URL" });
   }
 });
 
