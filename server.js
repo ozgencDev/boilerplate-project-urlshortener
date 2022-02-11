@@ -104,7 +104,7 @@ app.get("/", function (req, res) {
 });
 
 // Response for POST request
-app.post("/api/shorturl/new", async (req, res) => {
+app.post("/api/shorturl", async (req, res) => {
   const { url } = req.body;
   const shortURL = shortID.generate();
   console.log(validURL.isUri(url));
