@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require("mongoose");
 const dns = require("dns");
 const { makeShortUrl } = require("./utils/shortUrl");
+var validUrl = require("valid-url");
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -35,34 +36,30 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 });
 
 app.post("/api/shorturl", (req, res) => {
-  try {
-    const { url: longUrl } = req.body;
-    const { hostname, protocol } = new URL(longUrl);
-    if (protocol !== "https:" && protocol !== "http:") {
-      res.status(400).send({ error: "Invalid URL" });
-      return;
-    }
-    dns.lookup(hostname, async (err) => {
-      if (!err) {
-        const shortenedUrl = await urlModel.findOne({ longUrl });
-        if (shortenedUrl) {
-          res.send({
-            original_url: shortenedUrl.longUrl,
-            short_url: shortenedUrl.shortUrl,
-          });
-        } else {
-          const shortUrl = makeShortUrl(longUrl);
-          const url = new urlModel({ longUrl, shortUrl });
-          const doc = await url.save();
-          res.send({ original_url: doc.longUrl, short_url: doc.shortUrl });
-        }
-      } else {
-        res.send({ error: "invalid URL" });
-      }
-    });
-  } catch (error) {
-    res.status(500).send({ error: "invalid URL" });
+  const { url: longUrl } = req.body;
+  if (!validUrl.isUri(longUrl)) {
+    res.status(400).send({ error: "invalid URL" });
+    return;
   }
+  const { hostname } = new URL(longUrl);
+  dns.lookup(hostname, async (err) => {
+    if (!err) {
+      const shortenedUrl = await urlModel.findOne({ longUrl });
+      if (shortenedUrl) {
+        res.send({
+          original_url: shortenedUrl.longUrl,
+          short_url: shortenedUrl.shortUrl,
+        });
+      } else {
+        const shortUrl = makeShortUrl(longUrl);
+        const url = new urlModel({ longUrl, shortUrl });
+        const doc = await url.save();
+        res.send({ original_url: doc.longUrl, short_url: doc.shortUrl });
+      }
+    } else {
+      res.send({ error: "invalid URL" });
+    }
+  });
 });
 
 app.listen(port, function () {
