@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dns = require("dns");
-const { makeShortUrl } = require("./utils/shortUrl");
+const { makeShortUrl, urlIsValid } = require("./utils/shortUrl");
 var validUrl = require("valid-url");
 
 // Basic Configuration
@@ -37,7 +37,7 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 
 app.post("/api/shorturl", (req, res) => {
   const { url: longUrl } = req.body;
-  if (!validUrl.isUri(longUrl)) {
+  if (!urlIsValid(longUrl)) {
     res.status(400).send({ error: "invalid URL" });
     return;
   }
