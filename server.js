@@ -1,4 +1,4 @@
-/* require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -37,11 +37,11 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 
 app.post("/api/shorturl", (req, res) => {
   const { url: longUrl } = req.body;
-  if (!validUrl.isHttpUri(longUrl) && !validUrl.isHttpsUri(longUrl)) {
+  if (!validUrl.isWebUri(longUrl)) {
     res.status(400).send({ error: "invalid url" });
     return;
   }
-  const { hostname ,origin} = new URL(longUrl);
+  const { hostname, origin } = new URL(longUrl);
   const test = new URL(longUrl);
   console.log(hostname, test);
   dns.lookup(hostname, async (err) => {
@@ -67,9 +67,8 @@ app.post("/api/shorturl", (req, res) => {
 app.listen(port, function () {
   console.log(`Listening on port ${port}`);
 });
- */
 
-const express = require("express");
+/* const express = require("express");
 const mongo = require("mongodb");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -92,7 +91,7 @@ const urlSchema = new mongoose.Schema({
   originalURL: String,
   shortURL: String,
 });
-
+validURL.
 const URL = mongoose.model("URL", urlSchema);
 
 // App middleware
@@ -159,3 +158,4 @@ app.get("/api/shorturl/:shortURL?", async (req, res) => {
 app.listen(port, function () {
   console.log("Node.js listening ...");
 });
+ */
