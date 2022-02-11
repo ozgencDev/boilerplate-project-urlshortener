@@ -37,8 +37,11 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 app.post("/api/shorturl", (req, res) => {
   try {
     const { url: longUrl } = req.body;
-    const { hostname } = new URL(longUrl);
-
+    const { hostname, protocol } = new URL(longUrl);
+    if (protocol !== "https:" && protocol !== "http:") {
+      res.status(400).send({ error: "Invalid URL" });
+      return;
+    }
     dns.lookup(hostname, async (err) => {
       if (!err) {
         const shortenedUrl = await urlModel.findOne({ longUrl });
