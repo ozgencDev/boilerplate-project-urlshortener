@@ -37,7 +37,7 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
 
 app.post("/api/shorturl", (req, res) => {
   const { url: longUrl } = req.body;
-  if (!urlIsValid(longUrl) || longUrl.star) {
+  if (!validUrl.isHttpUri(longUrl) && !validUrl.isHttpsUri(longUrl)) {
     res.status(400).send({ error: "invalid url" });
     return;
   }
