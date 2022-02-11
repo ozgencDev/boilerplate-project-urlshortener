@@ -31,14 +31,14 @@ app.get("/api/shorturl/:shortUrl", async (req, res) => {
     const doc = await urlModel.findOne({ shortUrl: req.params.shortUrl });
     res.redirect(doc.longUrl);
   } catch (error) {
-    res.json({ error: "invalid URL" });
+    res.json({ error: "invalid url" });
   }
 });
 
 app.post("/api/shorturl", (req, res) => {
   const { url: longUrl } = req.body;
-  if (!urlIsValid(longUrl)) {
-    res.status(400).send({ error: "invalid URL" });
+  if (!urlIsValid(longUrl) || longUrl.star) {
+    res.status(400).send({ error: "invalid url" });
     return;
   }
   const { hostname } = new URL(longUrl);
@@ -57,7 +57,7 @@ app.post("/api/shorturl", (req, res) => {
         res.send({ original_url: doc.longUrl, short_url: doc.shortUrl });
       }
     } else {
-      res.send({ error: "invalid URL" });
+      res.send({ error: "invalid url" });
     }
   });
 });
